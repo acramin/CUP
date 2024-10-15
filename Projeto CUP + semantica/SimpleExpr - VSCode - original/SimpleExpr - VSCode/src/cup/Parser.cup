@@ -1,0 +1,53 @@
+// Especificação do parser CUP
+package parser;
+import java_cup.runtime.*;
+// Definição dos terminais
+terminal            SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD;
+terminal            UMINUS, LPAREN, RPAREN, EQUALS, PRINT;
+terminal Double     NUMBER, SIN, COS, PI, POW, ID;
+// Definição dos não-terminais
+non terminal Double    expr, program, command_list, command_part, command, assignment_command, print_command;
+// Precedência e associatividade dos operadores
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE, MOD;
+precedence left UMINUS;
+
+// Regras da gramática
+program ::= command_list;
+
+command_list ::= command_list command_part
+    | command_part
+    ;
+
+command_part ::= command SEMI
+    | error SEMI
+    ;
+
+command ::= assignment_command
+    | print_command
+    ;
+
+assignment_command ::= ID:id EQUALS expr:e {: System.out.println("Resultado: " + e); :} ;
+
+print_command ::= PRINT LPAREN expr:e RPAREN {: System.out.println("Resultado: " + e); :} ;
+
+expr ::= expr:e1 PLUS expr:e2
+            {: RESULT = e1 + e2; :}
+    | expr:e1 MINUS expr:e2
+            {: RESULT = e1 - e2; :}
+    | expr:e1 TIMES expr:e2
+            {: RESULT = e1 * e2; :}
+    | expr:e1 DIVIDE expr:e2
+            {: RESULT = e1 / e2; :}
+    | expr:e1 MOD expr:e2
+            {: RESULT = e1 % e2; :}
+    | NUMBER:n {: RESULT = n; :}
+    | MINUS expr:e {: RESULT = -e;
+                    :} %prec UMINUS
+    | LPAREN expr:e RPAREN {: RESULT = e; :}
+    | ID:id {: RESULT = id; :}
+    | SIN LPAREN expr:e RPAREN {: RESULT = Math.sin(e); :}
+    | COS LPAREN expr:e RPAREN {: RESULT = Math.cos(e); :}
+    | PI {: RESULT = Math.PI; :}
+    | expr:e1 POW expr:e2 {: RESULT = Math.pow(e1, e2); :}
+    ;

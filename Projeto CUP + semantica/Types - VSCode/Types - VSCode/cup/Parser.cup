@@ -1,0 +1,56 @@
+// Especificação CUP para gramática de tipos
+
+package parser;
+import java_cup.runtime.*;
+import java.util.HashMap;
+
+parser code {:
+    // Para armazenar o tipo (poderia ser um enum)
+    private Integer current_type;
+    // Tabela de variáveis
+    private HashMap<String, Identifier> symbolTable = new HashMap();
+:}
+
+
+/* Terminais */
+terminal            COMMA, SEMI;
+terminal Integer    INT, FLOAT;
+terminal Identifier ID;
+
+/* Não terminais */
+non terminal            goal;
+non terminal            decl_seq, decl, var_list;
+non terminal Integer    type;
+
+/* Gramática */
+
+goal ::= decl_seq {:
+            for(String k : symbolTable.keySet() ) {
+                System.out.println("Nome: " + k + " Identificador: " + 
+                        symbolTable.get(k));
+            }
+        :}
+    ;
+
+decl_seq ::= decl
+    | decl_seq decl
+    ;
+
+decl ::= type:t {: current_type = t; :} var_list SEMI
+        | error SEMI
+        ;
+
+type ::= INT:v {: RESULT = v; :}
+	| FLOAT:v {: RESULT = v; :}
+	;
+
+var_list ::= ID:id COMMA var_list {:
+                id.setType(current_type);
+                symbolTable.put(id.getName(), id);
+            :}
+	| ID:id {:
+                id.setType(current_type);
+                symbolTable.put(id.getName(), id);
+            :}
+	;
+

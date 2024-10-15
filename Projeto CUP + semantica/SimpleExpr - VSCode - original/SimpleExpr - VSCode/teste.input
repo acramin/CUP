@@ -1,0 +1,4 @@
+print(11);
+print(3**2);
+print(sin(PI));
+print(cos(PI));
