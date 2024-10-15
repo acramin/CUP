@@ -1,10 +1,18 @@
 // Especificação do parser CUP
 package parser;
 import java_cup.runtime.*;
+import java.util.HashMap;
+
+parser code {:
+// symbolTable é a tabela de símbolos
+        private HashMap<String, Double> symbolTable = new HashMap<>();
+:};
+
 // Definição dos terminais
 terminal            SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD;
 terminal            UMINUS, LPAREN, RPAREN, EQUALS, PRINT;
-terminal Double     NUMBER, SIN, COS, PI, POW, ID;
+terminal Double     NUMBER, SIN, COS, PI, POW;
+terminal String     ID;
 // Definição dos não-terminais
 non terminal           program, command_list, command_part, command, assignment_command, print_command;
 non terminal Double    expr;
@@ -29,9 +37,11 @@ command ::= assignment_command
     | print_command
     ;
 
-assignment_command ::= ID:id EQUALS expr:e {: System.out.println("Resultado: " + e); :} ;
+assignment_command ::= ID:id EQUALS expr:e 
+    {: symbolTable.put(id, e); :} ;
 
-print_command ::= PRINT LPAREN expr:e RPAREN {: System.out.println("Resultado: " + e); :} ;
+print_command ::= PRINT LPAREN expr:e RPAREN 
+    {: System.out.println("Resultado: " + e); :} ;
 
 expr ::= expr:e1 PLUS expr:e2
             {: RESULT = e1 + e2; :}
@@ -47,7 +57,7 @@ expr ::= expr:e1 PLUS expr:e2
     | MINUS expr:e {: RESULT = -e;
                     :} %prec UMINUS
     | LPAREN expr:e RPAREN {: RESULT = e; :}
-    | ID:id {: RESULT = id; :}
+    | ID:id {: RESULT = symbolTable.get(id); :}
     | expr:e1 POW expr:e2 {: RESULT = Math.pow(e1, e2); :}
     | SIN LPAREN expr:e RPAREN {: RESULT = Math.sin(e); :}
     | COS LPAREN expr:e RPAREN {: RESULT = Math.cos(e); :}
