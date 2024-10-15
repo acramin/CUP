@@ -7,9 +7,20 @@ print(9%2);
 print(5**2);
 print(PI);
 
-x = 11;
+x = PI;
 print(x);
 
 y = x + 2;
 print(y);
 
+print(sin(PI/2));
+print(cos(PI/2));
+
+z = cos(x)**2;
+print(z);
+
+w = sin(x)**2;
+print(w);
+
+v = (z + w) ** (1/2);
+print(v);
