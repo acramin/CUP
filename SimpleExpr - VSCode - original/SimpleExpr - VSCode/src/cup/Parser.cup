@@ -6,10 +6,12 @@ terminal            SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD;
 terminal            UMINUS, LPAREN, RPAREN, EQUALS, PRINT;
 terminal Double     NUMBER, SIN, COS, PI, POW, ID;
 // Definição dos não-terminais
-non terminal Double    expr, program, command_list, command_part, command, assignment_command, print_command;
+non terminal           program, command_list, command_part, command, assignment_command, print_command;
+non terminal Double    expr;
 // Precedência e associatividade dos operadores
 precedence left PLUS, MINUS;
 precedence left TIMES, DIVIDE, MOD;
+precedence left POW;
 precedence left UMINUS;
 
 // Regras da gramática
@@ -46,8 +48,8 @@ expr ::= expr:e1 PLUS expr:e2
                     :} %prec UMINUS
     | LPAREN expr:e RPAREN {: RESULT = e; :}
     | ID:id {: RESULT = id; :}
+    | expr:e1 POW expr:e2 {: RESULT = Math.pow(e1, e2); :}
     | SIN LPAREN expr:e RPAREN {: RESULT = Math.sin(e); :}
     | COS LPAREN expr:e RPAREN {: RESULT = Math.cos(e); :}
     | PI {: RESULT = Math.PI; :}
-    | expr:e1 POW expr:e2 {: RESULT = Math.pow(e1, e2); :}
     ;

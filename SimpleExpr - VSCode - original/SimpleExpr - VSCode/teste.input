@@ -1,1 +1,8 @@
-print(11);
+print(9+7);
+print(7-6);
+print(8+-2);
+print(5*3);
+print(4/5);
+print(9%2);
+print(5**2);
+print(PI);
